@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { Mesh, MeshBasicMaterial } from 'three';
 import { convertAstronomicalDegreesToCartesian } from './math';
 import { Exoplanet, CartesianCoordinates } from './types';
 
@@ -89,30 +90,49 @@ export function addTooltip(
   // tooltip rendering inspired by this repo (https://github.com/simondevyoutube/Quick_3D_MMORPG/blob/547884332ca650abe96264f7230702d36481b9bc/client/main.js)
   let canvas = document.createElement('CANVAS') as HTMLCanvasElement;
   let context2d = canvas.getContext('2d') as CanvasRenderingContext2D;
-  context2d.canvas.width = 256;
-  context2d.canvas.height = 128;
+  context2d.canvas.width = 552;
+  context2d.canvas.height = 256;
   context2d.fillStyle = '#FFF';
-  context2d.font = '18pt Helvetica';
-  context2d.shadowOffsetX = 3;
-  context2d.shadowOffsetY = 3;
-  context2d.shadowColor = 'rgba(0,0,0,0.3)';
-  context2d.shadowBlur = 4;
+
+  const fontSize = 20;
+  context2d.font = `bold ${fontSize}pt Helvetica`;
   context2d.textAlign = 'center';
-  context2d.fillText(clickedExoplanet.userData.pl_name, 128, 64);
+
+  const textLines = [
+    `Name: ${clickedExoplanet.userData.pl_name}`,
+    `Right Ascension: ${clickedExoplanet.userData.ra} degrees`,
+    `Declination: ${clickedExoplanet.userData.dec} degrees`,
+    `Distance: ${clickedExoplanet.userData.sy_dist} parsecs`,
+  ];
+
+  for (let i = 0; i < textLines.length; i++) {
+    context2d.fillText(textLines[i], 256, 64 + fontSize * i);
+  }
 
   const map = new THREE.CanvasTexture(context2d.canvas);
+  console.log(clickedExoplanet);
 
+  let tooltipColor = 0xffffff;
+
+  // this would make tooltip match exoplanet color, but it is pretty ugly
+  //   if (
+  //     clickedExoplanet instanceof Mesh &&
+  //     clickedExoplanet.material instanceof MeshBasicMaterial &&
+  //     clickedExoplanet.material.color
+  //   ) {
+  //     tooltipColor = clickedExoplanet.material.color.getHex();
+  //   }
   let tooltip = new THREE.Sprite(
-    new THREE.SpriteMaterial({ map: map, color: 0xffffff })
+    new THREE.SpriteMaterial({ map: map, color: tooltipColor })
   );
   tooltip.scale.set(2, 2, 1);
   tooltip.position.x = clickedExoplanet.position.x;
-  tooltip.position.y = clickedExoplanet.position.y + 0.5;
+  tooltip.position.y = clickedExoplanet.position.y + 0.25;
   tooltip.position.z = clickedExoplanet.position.z;
 
   scene.add(tooltip);
 
   setTimeout(() => {
     scene.remove(tooltip);
-  }, 3000);
+  }, 4000);
 }

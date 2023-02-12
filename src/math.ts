@@ -12,7 +12,7 @@ export function toRadians(degrees: number): number {
 export function convertAstronomicalDegreesToCartesian(
   rightAscensionDegrees: number,
   declinationDegrees: number,
-  distance: number
+  distance: number // can be either light years or parsecs
 ) {
   let x =
     distance *

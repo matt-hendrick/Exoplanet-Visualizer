@@ -4,9 +4,11 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import {
   generateEarth,
   generateClouds,
-  generateExoplanet,
+  addExoplanetToScene,
   addLighting,
   addGrids,
+  redirectToExoplanetsNASAPage,
+  addTooltip,
 } from './renderingFunctions';
 import { exoplanets } from './data';
 
@@ -40,14 +42,17 @@ let controls = new OrbitControls(camera, renderer.domElement);
 controls.zoomSpeed = 4;
 
 for (let i = 0; i < exoplanets.length; i++) {
-  generateExoplanet(exoplanets[i], scene);
+  addExoplanetToScene(exoplanets[i], scene);
 }
 
 // addGrids(scene);
 
-animate();
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
 
 window.addEventListener('resize', onWindowResize, false);
+
+animate();
 
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
@@ -56,11 +61,34 @@ function onWindowResize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
+function onMouseDown(event: MouseEvent) {
+  // calculate pointer position in normalized device coordinates
+  // (-1 to +1) for both components
+
+  pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+  pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  // update the picking ray with the camera and pointer position
+  raycaster.setFromCamera(pointer, camera);
+
+  // calculate objects intersecting the picking ray
+  const intersects = raycaster.intersectObjects(scene.children);
+
+  if (intersects.length && intersects[0]?.object?.userData?.pl_name) {
+    if (event.button === 1 || event.button === 2) {
+      redirectToExoplanetsNASAPage(intersects[0].object);
+    } else {
+      addTooltip(intersects[0].object, scene);
+    }
+  }
+}
+
+window.addEventListener('mousedown', onMouseDown);
+
 function animate() {
   requestAnimationFrame(animate);
 
-  earth.rotation.y += 0.0005;
-  clouds.rotation.y += 0.0005;
+  // earth.rotation.y += 0.0005;
+  // clouds.rotation.y += 0.0005;
 
   controls.update();
   renderer.render(scene, camera);

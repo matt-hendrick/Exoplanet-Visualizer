@@ -10,7 +10,7 @@ export class CartesianCoordinates {
   }
 }
 
-export class RightAscension {
+export class RightAscensionSexagesimal {
   hours: number;
   minutes: number;
   seconds: number;
@@ -22,7 +22,7 @@ export class RightAscension {
   }
 }
 
-export class Declination {
+export class DeclinationSexagesimal {
   degrees: number;
   minutes: number;
   seconds: number;
@@ -31,5 +31,27 @@ export class Declination {
     this.degrees = degrees;
     this.minutes = minutes;
     this.seconds = seconds;
+  }
+}
+
+export class Exoplanet {
+  pl_name: string;
+  hostname: string;
+  ra: number;
+  dec: number;
+  sy_dist: number;
+
+  constructor(
+    pl_name: string,
+    hostname: string,
+    ra: number,
+    dec: number,
+    sy_dist: number
+  ) {
+    this.pl_name = pl_name;
+    this.hostname = hostname;
+    this.ra = ra;
+    this.dec = dec;
+    this.sy_dist = sy_dist;
   }
 }

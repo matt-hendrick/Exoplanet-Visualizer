@@ -1,18 +1,20 @@
 import './style.css';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+// import { FlyControls } from 'three/examples/jsm/controls/FlyControls.js';
 import {
   generateEarth,
   generateClouds,
   addExoplanetToScene,
   addLighting,
-  addGrids,
   redirectToExoplanetsNASAPage,
   addTooltip,
-} from './renderingFunctions';
+  toggleGrid,
+} from './rendering';
 import { exoplanets } from './data';
 
 const scene = new THREE.Scene();
+
 const camera = new THREE.PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
@@ -45,14 +47,27 @@ for (let i = 0; i < exoplanets.length; i++) {
   addExoplanetToScene(exoplanets[i], scene);
 }
 
-// addGrids(scene);
-
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 
 window.addEventListener('resize', onWindowResize, false);
+window.addEventListener('pointerdown', onMouseDown);
+
+let resetPositionButton = document.getElementsByClassName(
+  'reset-position'
+)[0] as HTMLButtonElement;
+resetPositionButton.addEventListener('click', resetPosition, false);
+
+let toggleGridButton = document.getElementsByClassName(
+  'toggle-grid'
+)[0] as HTMLButtonElement;
+toggleGridButton.addEventListener('click', () => toggleGrid(scene), false);
 
 animate();
+
+function resetPosition() {
+  controls.reset();
+}
 
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
@@ -82,13 +97,11 @@ function onMouseDown(event: MouseEvent) {
   }
 }
 
-window.addEventListener('mousedown', onMouseDown);
-
 function animate() {
   requestAnimationFrame(animate);
 
-  // earth.rotation.y += 0.0005;
-  // clouds.rotation.y += 0.0005;
+  earth.rotation.y += 0.0005;
+  clouds.rotation.y += 0.001;
 
   controls.update();
   renderer.render(scene, camera);

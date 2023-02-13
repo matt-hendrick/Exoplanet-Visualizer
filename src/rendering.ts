@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import { Mesh, MeshBasicMaterial } from 'three';
+// import { Mesh, MeshBasicMaterial } from 'three';
 import { convertAstronomicalDegreesToCartesian } from './math';
-import { Exoplanet, CartesianCoordinates } from './types';
+import { Exoplanet } from './types';
 
 // Rendering of earth inspired by https://riptutorial.com/three-js/example/28900/creating-a-model-earth & https://blog.mastermaps.com/2013/09/creating-webgl-earth-with-threejs.html & https://github.com/fireship-io/threejs-scroll-animation-demo
 export function generateEarth(
@@ -45,14 +45,21 @@ export function addLighting(scene: THREE.Scene) {
   scene.add(directionalLight);
 }
 
-export function addGrids(scene: THREE.Scene) {
-  let gridSize = 1000;
-  var xyGrid = new THREE.GridHelper(gridSize, gridSize, 'red');
-  scene.add(xyGrid);
+let gridDisplayed = false;
+let gridSize = 1000;
+let xyGrid = new THREE.GridHelper(gridSize, gridSize, 'red');
+let xzGrid = new THREE.GridHelper(gridSize, gridSize, 'blue');
+xzGrid.geometry.rotateX(Math.PI / 2);
 
-  var xzGrid = new THREE.GridHelper(gridSize, gridSize, 'blue');
-  xzGrid.geometry.rotateX(Math.PI / 2);
-  scene.add(xzGrid);
+export function toggleGrid(scene: THREE.Scene) {
+  if (gridDisplayed) {
+    scene.remove(xyGrid);
+    scene.remove(xzGrid);
+  } else {
+    scene.add(xyGrid);
+    scene.add(xzGrid);
+  }
+  gridDisplayed = !gridDisplayed;
 }
 
 export function addExoplanetToScene(exoplanet: Exoplanet, scene: THREE.Scene) {
@@ -94,8 +101,8 @@ export function addTooltip(
   context2d.canvas.height = 256;
   context2d.fillStyle = '#FFF';
 
-  const fontSize = 20;
-  context2d.font = `bold ${fontSize}pt Helvetica`;
+  const fontSize = 18;
+  context2d.font = `bold ${fontSize}pt Arial`;
   context2d.textAlign = 'center';
 
   const textLines = [
@@ -110,7 +117,6 @@ export function addTooltip(
   }
 
   const map = new THREE.CanvasTexture(context2d.canvas);
-  console.log(clickedExoplanet);
 
   let tooltipColor = 0xffffff;
 

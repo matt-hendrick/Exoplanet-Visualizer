@@ -1,7 +1,6 @@
 import { Exoplanet } from './types';
 
 // exoplanet data pulled from the NASA Exoplanet Science Institute (https://exoplanetarchive.ipac.caltech.edu/index.html)
-// query to get the data below is (https://exoplanetarchive.ipac.caltech.edu/cgi-bin/TblView/nph-tblView?app=ExoTbls&config=PS&constraint=default_flag=1&constraint=disc_facility+like+%27%25TESS%25%27)
 export const exoplanets: Exoplanet[] = [
   {
     pl_name: 'xi Aql b',
